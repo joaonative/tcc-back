@@ -59,30 +59,4 @@ async function createUser(req: Request, res: Response) {
   }
 }
 
-/* 
-
-async function passowrdMatches(req: Request, res: Response) {
-  const { password, id } = req.body;
-
-  if (!id || !password) {
-    return res.status(400).send("You need to provide user id and password.");
-  }
-
-  const user = await prisma.user.findUnique({ where: { id: id } });
-
-  if (!user) {
-    return res.status(404);
-  }
-
-  const passwordMatch = await bcrypt.compare(password, user.password);
-
-  if (!passwordMatch) {
-    return res.status(401).send("Incorrect password.");
-  }
-
-  res.sendStatus(200);
-}
-
-*/
-
 export { getUserById, createUser };
