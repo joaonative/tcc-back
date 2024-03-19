@@ -52,6 +52,7 @@ async function createUser(req: Request, res: Response) {
         password: hashedPassword,
         age: age,
         phone: phone,
+        updatedAt: new Date(Date.now()),
       },
     });
 
