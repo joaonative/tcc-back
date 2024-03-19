@@ -1,8 +1,6 @@
-import { PrismaClient } from "@prisma/client";
+import User from "../models/User";
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
-
-const prisma = new PrismaClient();
 
 async function getUserById(req: Request, res: Response) {
   try {
@@ -13,7 +11,7 @@ async function getUserById(req: Request, res: Response) {
       return res.status(400).send("You need to provide user id.");
     }
 
-    const user = await prisma.user.findUnique({ where: { id: id } });
+    const user = await User.findById(id);
 
     if (!user) {
       //sending not found if dont find user
@@ -44,17 +42,15 @@ async function createUser(req: Request, res: Response) {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    //creating user
-    await prisma.user.create({
-      data: {
-        email: email,
-        name: name,
-        password: hashedPassword,
-        age: age,
-        phone: phone,
-        updatedAt: new Date(Date.now()),
-      },
+    const user = new User({
+      email: email,
+      name: name,
+      password: hashedPassword,
+      age: age,
+      phone: phone,
     });
+
+    await user.save();
 
     //sending status created
     res.sendStatus(201);

@@ -1,9 +1,12 @@
-import express from "express";
+import express, { Request, Response } from "express";
+import mongoose from "mongoose";
 
 import userRoutes from "./routes/User";
 
 const server = express();
 server.use(express.json());
+
+mongoose.connect(process.env.MONGO_URL);
 
 server.use("/users", userRoutes);
 
