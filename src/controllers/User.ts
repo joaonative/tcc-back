@@ -122,4 +122,36 @@ async function logout(req: Request, res: Response) {
   res.status(200).send();
 }
 
-export { createUser, login, logout };
+async function updateImageUrl(req: Request, res: Response) {
+  const { id } = req.params;
+  const { imageUrl } = req.body;
+
+  if (!imageUrl || !id) {
+    res.status(400).send({ message: "parametros incompletos" });
+    return;
+  }
+
+  const user = await User.findById(id);
+
+  if (!user) {
+    res.status(400).send({ message: "usuario nao encontrado" });
+    return;
+  }
+
+  await user.updateOne({ imageUrl });
+
+  const updatedUser = await User.findById(id);
+
+  const userData = {
+    id: updatedUser._id,
+    name: updatedUser.name,
+    age: updatedUser.age,
+    email: updatedUser.email,
+    phone: updatedUser.phone,
+    imageUrl: updatedUser.imageUrl,
+  };
+
+  res.status(200).json({ userData });
+}
+
+export { createUser, login, logout, updateImageUrl };

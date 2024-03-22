@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 
 async function validadeToken(req: Request, res: Response, next: NextFunction) {
   try {
-    const token = req.headers.authorization?.split(" ")[1];
+    const { jwt: token } = req.cookies;
 
     //if token was not provided, return unauthorized
     if (!token) {
