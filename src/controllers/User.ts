@@ -113,7 +113,7 @@ async function login(req: Request, res: Response) {
     //send response with user data and status OK
     res.status(200).json({ userData });
   } catch (error) {
-    throw new Error("Error creating user: " + error.message);
+    throw new Error("Error logging user: " + error.message);
   }
 }
 
