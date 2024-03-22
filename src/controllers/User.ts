@@ -8,9 +8,9 @@ const maxAge = 7 * 24 * 60 * 60;
 
 async function createUser(req: Request, res: Response) {
   try {
-    const { email, password, name, age, phone } = req.body;
+    const { email, password, name, age, phone, imageUrl } = req.body;
 
-    if (!email || !password || !name || !age || !phone) {
+    if (!email || !password || !name || !age || !phone || !imageUrl) {
       //sending bad request if dont recive userdata
       res.status(400).send({ message: "por favor preencha todos os campos" });
       return;
@@ -32,6 +32,7 @@ async function createUser(req: Request, res: Response) {
       password: hashedPassword,
       age: age,
       phone: phone,
+      imageUrl: imageUrl,
     });
 
     await user.save();
@@ -42,6 +43,7 @@ async function createUser(req: Request, res: Response) {
       age: user.age,
       email: user.email,
       phone: user.phone,
+      imageUrl: user.imageUrl,
     };
 
     //sending status created
@@ -94,6 +96,7 @@ async function login(req: Request, res: Response) {
       age: user.age,
       email: user.email,
       phone: user.phone,
+      imageUrl: user.imageUrl,
     };
 
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {

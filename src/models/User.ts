@@ -8,6 +8,7 @@ interface User {
   password: string;
   phone?: string;
   adm: boolean;
+  imageUrl: string;
 }
 
 interface UserModel extends Model<UserDocument> {
@@ -24,6 +25,7 @@ const userSchema = new Schema<UserDocument, UserModel>(
     password: { type: String, required: true },
     phone: { type: String, unique: true },
     adm: { type: Boolean, default: false },
+    imageUrl: { type: String, required: true },
   },
   {
     statics: {
