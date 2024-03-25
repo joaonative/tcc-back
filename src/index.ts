@@ -9,8 +9,12 @@ import { validadeToken } from "./middleware/auth";
 const server = express();
 server.use(
   cors({
-    origin: "http://localhost:5173", // Permitir solicitações do front-end em localhost:5173
-    credentials: true, // Permitir o envio de cookies
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:4173",
+      "https://iparque.vercel.app",
+    ],
+    credentials: true,
   })
 );
 server.use(cookieParser());
