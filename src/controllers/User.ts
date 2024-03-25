@@ -24,6 +24,16 @@ async function createUser(req: Request, res: Response) {
       return;
     }
 
+    const alreadyUsingPhone = await User.findOne({ phone });
+
+    if (alreadyUsingPhone) {
+      //returnig bad request if user existis
+      res
+        .status(400)
+        .send({ message: "número de telefone cadastrado em outra conta" });
+      return;
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = new User({
