@@ -1,12 +1,8 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "moduleResolution": "node",
     "outDir": "dist",
-    "rootDir": "src",
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "sourceMap": true,
-    "esModuleInterop": true
+    "target": "ESNext",
+    "esModuleInterop": true,
+    "module": "CommonJS"
   }
 }

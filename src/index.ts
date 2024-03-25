@@ -27,3 +27,5 @@ server.use("/protected", validadeToken, (req: Request, res: Response) => {
 server.listen(process.env.PORT, () => {
   console.log(`running on port: ${process.env.PORT}`);
 });
+
+export default server;
