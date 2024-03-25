@@ -3,17 +3,17 @@ import jwt from "jsonwebtoken";
 
 async function validadeToken(req: Request, res: Response, next: NextFunction) {
   try {
-    const { jwt: token } = req.cookies;
+    const authHeader = req.headers["authorization"];
 
-    //if token was not provided, return unauthorized
-    if (!token) {
-      res.status(400).send({ message: "token não fornecido" });
+    if (!authHeader || typeof authHeader !== 'string') {
+      res.status(400).send({ message: "Token não fornecido" });
       return;
     }
 
+    const [, token] = authHeader.split(' ');
+
     jwt.verify(token, process.env.JWT_SECRET, (err) => {
       if (err) {
-        //if validation fails, return unauthorized
         res
           .status(401)
           .send({ message: "validação falhou, por favor se autentique" });

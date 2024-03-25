@@ -37,6 +37,10 @@ async function createUser(req: Request, res: Response) {
 
     await user.save();
 
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+      expiresIn: maxAge,
+    });
+
     const userData = {
       id: user._id,
       name: user.name,
@@ -44,19 +48,8 @@ async function createUser(req: Request, res: Response) {
       email: user.email,
       phone: user.phone,
       imageUrl: user.imageUrl,
+      token: token,
     };
-
-    //sending status created
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-      expiresIn: maxAge,
-    });
-
-    //sending status created and setting cookie
-    //set cookie
-    res.cookie("jwt", token, {
-      httpOnly: true,
-      maxAge: maxAge * 1000,
-    });
 
     //send response with user data and status created
     res.status(201).json({ userData });
@@ -90,6 +83,10 @@ async function login(req: Request, res: Response) {
       return;
     }
 
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+      expiresIn: maxAge,
+    });
+
     const userData = {
       id: user._id,
       name: user.name,
@@ -97,18 +94,8 @@ async function login(req: Request, res: Response) {
       email: user.email,
       phone: user.phone,
       imageUrl: user.imageUrl,
+      token: token,
     };
-
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-      expiresIn: maxAge,
-    });
-
-    //sending status ok and setting cookie
-    //set cookie
-    res.cookie("jwt", token, {
-      httpOnly: true,
-      maxAge: maxAge * 1000,
-    });
 
     //send response with user data and status OK
     res.status(200).json({ userData });
@@ -136,6 +123,14 @@ async function updateUser(req: Request, res: Response) {
       return;
     }
 
+    const token = jwt.sign(
+      { userId: updatedUser._id },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: maxAge,
+      }
+    );
+
     const userData = {
       id: updatedUser._id,
       name: updatedUser.name,
@@ -143,6 +138,7 @@ async function updateUser(req: Request, res: Response) {
       email: updatedUser.email,
       phone: updatedUser.phone,
       imageUrl: updatedUser.imageUrl,
+      token: token,
     };
 
     res.status(200).json({ userData });
