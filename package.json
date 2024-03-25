@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "ts-node-dev --env-file .env src/index.ts",
-    "vercel-build": "echo hello build"
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",
