@@ -1,4 +1,4 @@
-import { request, Request, Response } from "express";
+import { Request, Response } from "express";
 import Event from "../models/Event";
 import User from "../models/User";
 
@@ -33,6 +33,7 @@ async function createEvent(req: Request, res: Response) {
     res.status(400).send({ message: "cabeçalho de id de usuário faltando" });
     return;
   }
+  
 
   const owner = await User.findById(id);
 
