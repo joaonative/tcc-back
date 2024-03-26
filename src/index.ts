@@ -1,9 +1,9 @@
 import express, { Request, Response } from "express";
-import cookieParser from "cookie-parser";
 import mongoose from "mongoose";
 import cors from "cors";
 
 import userRoutes from "./routes/User";
+import eventsRoutes from "./routes/Events";
 
 const server = express();
 server.use(
@@ -22,6 +22,7 @@ server.use(express.json());
 mongoose.connect(process.env.MONGO_URL);
 
 server.use("/users", userRoutes);
+server.use("/events", eventsRoutes);
 
 server.listen(process.env.PORT, () => {
   console.log(`running on port: ${process.env.PORT}`);
