@@ -13,4 +13,4 @@ const communitySchema = new Schema(
 );
 
 const Community = model("Community", communitySchema);
-export default Event;
+export default Community;
