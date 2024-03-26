@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { request, Request, Response } from "express";
 import Event from "../models/Event";
 import User from "../models/User";
 
@@ -67,4 +67,14 @@ async function createEvent(req: Request, res: Response) {
   res.status(201).json({ event });
 }
 
-export { createEvent };
+async function getEvents(req: Request, res: Response) {
+  const events = await Event.find();
+  if (!events) {
+    res.status(404).send({ message: "eventos nâo encontrados" });
+    return;
+  }
+
+  res.status(200).json({ events });
+}
+
+export { createEvent, getEvents };
