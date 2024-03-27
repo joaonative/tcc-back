@@ -8,11 +8,11 @@ import eventsRoutes from "./routes/Events";
 const server = express();
 server.use(
   cors({
-    origin: [
+    /* origin: [
       "http://localhost:5173",
       "http://localhost:4173",
       "https://iparque.vercel.app",
-    ],
+    ], */
     credentials: true,
   })
 );
