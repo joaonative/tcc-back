@@ -1,5 +1,5 @@
 import { request, Request, Response } from "express";
-import { now } from "mongoose";
+import mongoose, { now } from "mongoose";
 import Event from "../models/Event";
 import User from "../models/User";
 
@@ -33,6 +33,10 @@ async function createEvent(req: Request, res: Response) {
   if (!id) {
     res.status(400).send({ message: "cabeçalho de id de usuário faltando" });
     return;
+  }
+
+  if (!mongoose.isValidObjectId(id)) {
+    return res.status(400).send({ message: "formato de id inválido" });
   }
 
   const owner = await User.findById(id);
@@ -95,6 +99,16 @@ async function joinEvent(req: Request, res: Response) {
   const { id } = req.headers;
   const { id: eventId } = req.params;
 
+  if (!id || !eventId) {
+    return res
+      .status(400)
+      .send({ message: "faltando parâmetros ou cabeçalho" });
+  }
+
+  if (!mongoose.isValidObjectId(id) || !mongoose.isValidObjectId(eventId)) {
+    return res.status(400).send({ message: "formato de id inválido" });
+  }
+
   const event = await Event.findById(eventId);
   const user = await User.findById(id);
 
@@ -115,6 +129,7 @@ async function joinEvent(req: Request, res: Response) {
   }
 
   event.participants.push(user.id);
+  event.participantCount += 1;
   await event.save();
   res.status(200).json({ event });
 }
