@@ -11,8 +11,9 @@ const eventSchema = new Schema(
     participantCount: { type: Number },
     participantLimit: { type: Number, required: true },
     category: { type: String, required: true },
-    participants: { type: Array },
+    participants: [{ type: String }],
     owner: { type: String, required: true },
+    isExpired: { type: Boolean, required: true, default: false },
   },
   { timestamps: true }
 );
