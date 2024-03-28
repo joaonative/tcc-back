@@ -46,7 +46,7 @@ async function createEvent(req: Request, res: Response) {
     return;
   }
 
-  const duplicatedEvent = await Event.findOne({ owner: owner.id, name });
+  const duplicatedEvent = await Event.findOne({ owner: owner._id, name });
 
   if (duplicatedEvent) {
     res
@@ -54,6 +54,9 @@ async function createEvent(req: Request, res: Response) {
       .send({ message: "evento do mesmo criador com nome duplicado" });
     return;
   }
+
+  const participantCount = 1;
+  const participants = [owner.id];
 
   const event = new Event({
     name,
@@ -63,6 +66,8 @@ async function createEvent(req: Request, res: Response) {
     age_range,
     imageUrl,
     participantLimit,
+    participantCount,
+    participants,
     category,
     owner: owner.id,
   });
@@ -76,6 +81,42 @@ async function createEvent(req: Request, res: Response) {
   await event.save();
 
   res.status(201).json({ event });
+}
+
+async function deleteEvent(req: Request, res: Response) {
+  const { id } = req.headers;
+  const { id: eventId } = req.params;
+
+  if (!id || !eventId) {
+    return res
+      .status(400)
+      .send({ message: "faltando parâmetros ou cabeçalho" });
+  }
+
+  if (!mongoose.isValidObjectId(id) || !mongoose.isValidObjectId(eventId)) {
+    return res.status(400).send({ message: "formato de id inválido" });
+  }
+
+  const trashEvent = await Event.findById(eventId);
+
+  if (!trashEvent) {
+    return res.status(404).send({ message: "evento não encontrado" });
+  }
+
+  const trashUser = await User.findById(id);
+
+  if (!trashUser) {
+    return res.status(404).send({ message: "usuário não encontrado" });
+  }
+
+  if (trashUser.id !== trashEvent.owner) {
+    console.log(trashUser._id, trashEvent.owner);
+    return res
+      .status(401)
+      .send({ message: "você não está autorizado a deletar" });
+  }
+  await trashEvent.deleteOne();
+  res.status(204).end();
 }
 
 async function getEvents(req: Request, res: Response) {
@@ -113,7 +154,7 @@ async function joinEvent(req: Request, res: Response) {
   const user = await User.findById(id);
 
   if (!event) {
-    return res.status(404).send({ message: "evento nao encontrado" });
+    return res.status(404).send({ message: "evento não encontrado" });
   }
 
   if (event.participantCount === event.participantLimit) {
@@ -122,6 +163,12 @@ async function joinEvent(req: Request, res: Response) {
 
   if (event.participants.includes(user.id)) {
     return res.status(400).send({ message: "você já está participando" });
+  }
+
+  if (event.age_range >= user.age) {
+    return res.status(400).send({
+      message: "você não tem idade mínima para participar deste evento",
+    });
   }
 
   if (event.isExpired) {
@@ -133,5 +180,39 @@ async function joinEvent(req: Request, res: Response) {
   await event.save();
   res.status(200).json({ event });
 }
+async function leaveEvent(req: Request, res: Response) {
+  const { id } = req.headers;
+  const { id: eventId } = req.params;
 
-export { createEvent, getEvents, joinEvent };
+  if (!id || !eventId) {
+    return res
+      .status(400)
+      .send({ message: "faltando parâmetros ou cabeçalho" });
+  }
+
+  if (!mongoose.isValidObjectId(id) || !mongoose.isValidObjectId(eventId)) {
+    return res.status(400).send({ message: "formato de id inválido" });
+  }
+
+  const event = await Event.findById(eventId);
+  const user = await User.findById(id);
+
+  if (!event) {
+    return res.status(404).send({ message: "evento não encontrado" });
+  }
+
+  if (!user) {
+    return res.status(404).send({ message: "usário não encontrado" });
+  }
+  if (!event.participants.includes(user.id)) {
+    return res
+      .status(400)
+      .send({ message: "você não está participando deste evento" });
+  }
+
+  event.participants.splice(user.id);
+  event.participantCount -= 1;
+  await event.save();
+}
+
+export { createEvent, getEvents, joinEvent, deleteEvent };
