@@ -115,8 +115,7 @@ async function login(req: Request, res: Response) {
 }
 
 async function logout(req: Request, res: Response) {
-  res.cookie("jwt", "", { maxAge: 1 });
-  res.status(200).send();
+  res.status(200).end();
 }
 
 async function updateUser(req: Request, res: Response) {
