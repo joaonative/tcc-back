@@ -79,7 +79,7 @@ async function createEvent(req: Request, res: Response) {
 }
 
 async function getEvents(req: Request, res: Response) {
-  const events = await Event.find();
+  const events = await Event.find({ isExpired: false });
 
   if (!events) {
     return res.status(404).send({ message: "evento nâo encontrados" });
