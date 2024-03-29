@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 import User from "../models/User";
+import mongoose from "mongoose";
 
 const maxAge = 7 * 24 * 60 * 60;
 
@@ -156,4 +157,20 @@ async function updateUser(req: Request, res: Response) {
   }
 }
 
-export { createUser, login, logout, updateUser };
+async function getUserImageUrl(req: Request, res: Response) {
+  const { id } = req.params;
+
+  if (!id || !mongoose.isValidObjectId(id)) {
+    return res.status(400).send({ message: "forneca o id a ser procurado" });
+  }
+  const user = await User.findById(id);
+  if (!user) {
+    return;
+  }
+
+  const imageUrl = user.imageUrl;
+
+  res.status(200).json({ imageUrl });
+}
+
+export { createUser, login, logout, updateUser, getUserImageUrl };

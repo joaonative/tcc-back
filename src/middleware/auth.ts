@@ -3,14 +3,14 @@ import jwt from "jsonwebtoken";
 
 async function validadeToken(req: Request, res: Response, next: NextFunction) {
   try {
-    const authHeader = req.headers["authorization"];
+    const auth = req.headers["authorization"];
 
-    if (!authHeader || typeof authHeader !== 'string') {
+    if (!auth) {
       res.status(400).send({ message: "Token não fornecido" });
       return;
     }
 
-    const [, token] = authHeader.split(' ');
+    const [, token] = auth.split(" ");
 
     jwt.verify(token, process.env.JWT_SECRET, (err) => {
       if (err) {
