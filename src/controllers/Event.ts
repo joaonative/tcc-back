@@ -136,9 +136,27 @@ async function getEvents(req: Request, res: Response) {
   res.status(200).json({ events });
 }
 
+async function getEventById(req: Request, res: Response) {
+  const { eventId } = req.params;
+
+  if (!eventId) {
+    return res
+      .status(400)
+      .send({ message: "faltando parâmetros de id do evento" });
+  }
+
+  const event = await Event.findById(eventId);
+
+  if (!event) {
+    return res.status(404).send({ message: "evento não envontrado" });
+  }
+
+  res.status(200).json({ event });
+}
+
 async function joinEvent(req: Request, res: Response) {
   const { id } = req.headers;
-  const { id: eventId } = req.params;
+  const { eventId } = req.params;
 
   if (!id || !eventId) {
     return res
@@ -180,9 +198,10 @@ async function joinEvent(req: Request, res: Response) {
   await event.save();
   res.status(200).json({ event });
 }
+
 async function leaveEvent(req: Request, res: Response) {
   const { id } = req.headers;
-  const { id: eventId } = req.params;
+  const { eventId } = req.params;
 
   if (!id || !eventId) {
     return res
@@ -202,7 +221,7 @@ async function leaveEvent(req: Request, res: Response) {
   }
 
   if (!user) {
-    return res.status(404).send({ message: "usário não encontrado" });
+    return res.status(404).send({ message: "usuário não encontrado" });
   }
   if (!event.participants.includes(user.id)) {
     return res
@@ -210,9 +229,19 @@ async function leaveEvent(req: Request, res: Response) {
       .send({ message: "você não está participando deste evento" });
   }
 
-  event.participants.splice(user.id);
+  const index = event.participants.indexOf(user.id);
+  event.participants.splice(index, 1);
   event.participantCount -= 1;
   await event.save();
+
+  res.status(200).json({ event });
 }
 
-export { createEvent, getEvents, joinEvent, deleteEvent };
+export {
+  createEvent,
+  getEvents,
+  getEventById,
+  joinEvent,
+  leaveEvent,
+  deleteEvent,
+};
