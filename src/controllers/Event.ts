@@ -151,7 +151,26 @@ async function getEventById(req: Request, res: Response) {
     return res.status(404).send({ message: "evento não envontrado" });
   }
 
-  res.status(200).json({ event });
+  const participants = [];
+
+  const owner = await User.findById(event.owner);
+
+  if (!owner) {
+    return res.status(404).send({ message: "criador não encontrado" });
+  }
+
+  for (const participant of event.participants) {
+    const user = await User.findById(participant);
+    if (user) {
+      participants.push({
+        id: user.id,
+        name: user.name,
+        imageUrl: user.imageUrl,
+      });
+    }
+  }
+
+  res.status(200).json({ event, participants, owner: owner.name });
 }
 
 async function joinEvent(req: Request, res: Response) {
