@@ -72,7 +72,7 @@ async function createEvent(req: Request, res: Response) {
     owner: owner.id,
   });
 
-  if (event.date < now()) {
+  if (event.date < date) {
     return res
       .status(400)
       .send({ message: "a data do evento precisa ser válida" });
