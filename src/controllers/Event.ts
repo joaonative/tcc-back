@@ -11,6 +11,7 @@ async function createEvent(req: Request, res: Response) {
     date,
     age_range,
     imageUrl,
+    mapUrl,
     participantLimit,
     category,
   } = req.body;
@@ -23,6 +24,7 @@ async function createEvent(req: Request, res: Response) {
     !date ||
     !age_range ||
     !imageUrl ||
+    !mapUrl ||
     !participantLimit ||
     !category
   ) {
@@ -65,6 +67,7 @@ async function createEvent(req: Request, res: Response) {
     date,
     age_range,
     imageUrl,
+    mapUrl,
     participantLimit,
     participantCount,
     participants,
