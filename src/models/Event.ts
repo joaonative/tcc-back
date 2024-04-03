@@ -7,6 +7,7 @@ const eventSchema = new Schema(
     location: { type: String, required: true },
     date: { type: Date, required: true },
     imageUrl: { type: String, required: true },
+    mapUrl: { type: String, required: true },
     age_range: { type: Number, required: true },
     participantCount: { type: Number },
     participantLimit: { type: Number, required: true },

@@ -7,10 +7,12 @@ const communitySchema = new Schema(
     age_range: { type: Number, required: true },
     participantCount: { type: Number, required: true },
     participantLimit: { type: Number, required: true },
+    participants: [{ type: String }],
+    owner: { type: String, required: true },
     category: { type: String, required: true },
   },
   { timestamps: true }
 );
 
 const Community = model("Community", communitySchema);
-export default Event;
+export default Community;
