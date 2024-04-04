@@ -132,7 +132,7 @@ async function getEvents(req: Request, res: Response) {
       .send({ message: "a paginação tem que ser um valor numérico" });
     return;
   }
-  const skip = (page - 1) * limit;
+  const skip = page * limit;
   const communities = await Event.find().skip(skip).limit(limit);
 
   if (!events) {
