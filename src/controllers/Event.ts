@@ -88,7 +88,7 @@ async function createEvent(req: Request, res: Response) {
 
 async function deleteEvent(req: Request, res: Response) {
   const { id } = req.headers;
-  const { id: eventId } = req.params;
+  const { eventId } = req.params;
 
   if (!id || !eventId) {
     return res
@@ -158,10 +158,14 @@ async function getEventById(req: Request, res: Response) {
       .send({ message: "faltando parâmetros de id do evento" });
   }
 
+  if (!mongoose.isValidObjectId(eventId)) {
+    return res.status(400).send({ message: "formato de id inválido" });
+  }
+
   const event = await Event.findById(eventId);
 
   if (!event) {
-    return res.status(404).send({ message: "evento não envontrado" });
+    return res.status(404).send({ message: "evento não encontrado" });
   }
 
   const participants = [];
@@ -215,7 +219,7 @@ async function joinEvent(req: Request, res: Response) {
     return res.status(400).send({ message: "você já está participando" });
   }
 
-  if (event.age_range >= user.age) {
+  if (event.age_range > user.age) {
     return res.status(400).send({
       message: "você não tem idade mínima para participar deste evento",
     });
