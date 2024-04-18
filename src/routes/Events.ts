@@ -6,12 +6,14 @@ import {
   getEvents,
   joinEvent,
   leaveEvent,
+  getEventsByOwner,
 } from "../controllers/Event";
 import { validadeToken } from "../middleware/auth";
 
 const router = express.Router();
 
 router.get("/", validadeToken, getEvents);
+router.get("/:owner", validadeToken, getEventsByOwner);
 router.get("/:eventId", validadeToken, getEventById);
 router.post("/", validadeToken, createEvent);
 router.put("/join/:eventId", validadeToken, joinEvent);
