@@ -123,7 +123,6 @@ async function deleteEvent(req: Request, res: Response) {
 }
 
 async function getEvents(req: Request, res: Response) {
-  const events = await Event.find({ isExpired: false });
   const page = req.query.page || 0;
   const limit = 9;
   if (typeof page !== "number") {
@@ -133,7 +132,7 @@ async function getEvents(req: Request, res: Response) {
     return;
   }
   const skip = page * limit;
-  const communities = await Event.find().skip(skip).limit(limit);
+  const events = await Event.find({ isExpired: false }).skip(skip).limit(limit);
 
   if (!events) {
     return res.status(404).send({ message: "evento nâo encontrados" });
