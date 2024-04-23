@@ -145,9 +145,9 @@ async function getEventsByOwner(req: Request, res: Response) {
 }
 
 async function getEvents(req: Request, res: Response) {
-  const page = req.query.page || 0;
+  const page = +req.query.page || 0;
   const limit = 9;
-  if (typeof page !== "number") {
+  if (isNaN(page) || page < 0) {
     res
       .status(400)
       .send({ message: "a paginação tem que ser um valor numérico" });
