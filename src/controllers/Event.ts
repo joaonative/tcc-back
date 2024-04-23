@@ -132,6 +132,8 @@ async function getEvents(req: Request, res: Response) {
     return;
   }
   const skip = page * limit;
+  const totalEvents = await Event.countDocuments({ isExpired: false });
+  const totalPages = Math.ceil(totalEvents / limit);
   const events = await Event.find({ isExpired: false }).skip(skip).limit(limit);
 
   if (!events) {
@@ -145,7 +147,7 @@ async function getEvents(req: Request, res: Response) {
     }
   });
 
-  res.status(200).json({ events });
+  res.status(200).json({ events, totalPages });
 }
 
 async function getEventById(req: Request, res: Response) {
