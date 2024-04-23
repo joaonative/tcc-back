@@ -122,6 +122,28 @@ async function deleteEvent(req: Request, res: Response) {
   res.status(204).end();
 }
 
+async function getEventsByOwner(req: Request, res: Response) {
+  const owner = req.params;
+  if (!owner) {
+    return;
+  }
+  const events = await Event.find({ owner, isExpired: false });
+  if (!events) {
+    return res
+      .status(404)
+      .send({ message: "eventos deste criador não encontrados" });
+  }
+
+  events.map(async (event) => {
+    if (event.date < now()) {
+      event.isExpired = true;
+      await event.save();
+    }
+
+    res.status(200).json({ events });
+  });
+}
+
 async function getEvents(req: Request, res: Response) {
   const page = req.query.page || 0;
   const limit = 9;
@@ -279,4 +301,5 @@ export {
   joinEvent,
   leaveEvent,
   deleteEvent,
+  getEventsByOwner,
 };
