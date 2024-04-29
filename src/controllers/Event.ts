@@ -132,11 +132,11 @@ async function deleteEvent(req: Request, res: Response) {
 
 async function getEventsByOwner(req: Request, res: Response) {
   try {
-    const owner = req.params;
-    if (!owner) {
+    const { id } = req.params;
+    if (!id) {
       return;
     }
-    const events = await Event.find({ owner, isExpired: false });
+    const events = await Event.find({ owner: id, isExpired: false });
     if (!events) {
       return res
         .status(404)
