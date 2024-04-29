@@ -4,6 +4,7 @@ import cors from "cors";
 
 import userRoutes from "./routes/User";
 import eventsRoutes from "./routes/Events";
+import communitiesRoutes from "./routes/Community";
 
 const server = express();
 server.use(
@@ -23,6 +24,7 @@ mongoose.connect(process.env.MONGO_URL);
 
 server.use("/users", userRoutes);
 server.use("/events", eventsRoutes);
+server.use("/communities", communitiesRoutes);
 
 server.listen(process.env.PORT, () => {
   console.log(`running on port: ${process.env.PORT}`);
