@@ -235,6 +235,24 @@ async function getEventById(req: Request, res: Response) {
   }
 }
 
+async function getEventsIsParticipanting(req: Request, res: Response) {
+  try {
+    const { id } = req.headers;
+
+    if (!mongoose.isValidObjectId(id)) {
+      return res.status(400).send({ message: "formato de id inválido" });
+    }
+
+    const events = await Event.find({
+      participants: { $elemMatch: { $eq: id } },
+    });
+
+    res.status(200).json({ events });
+  } catch (error) {
+    console.log("Erro ao mostrar eventos que está participando", error);
+  }
+}
+
 async function joinEvent(req: Request, res: Response) {
   try {
     const { id } = req.headers;
@@ -334,4 +352,5 @@ export {
   leaveEvent,
   deleteEvent,
   getEventsByOwner,
+  getEventsIsParticipanting,
 };
