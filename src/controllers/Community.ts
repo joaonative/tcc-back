@@ -110,6 +110,24 @@ async function getCommunity(req: Request, res: Response) {
   res.status(200).json({ communities });
 }
 
+async function getCommunitiesIsParticipanting(req: Request, res: Response) {
+  try {
+    const { id } = req.headers;
+
+    if (!mongoose.isValidObjectId(id)) {
+      return res.status(400).send({ message: "formato de id inválido" });
+    }
+
+    const communities = await Community.find({
+      participants: { $elemMatch: { $eq: id } },
+    });
+
+    res.status(200).json({ communities });
+  } catch (error) {
+    console.log("Erro ao mostrar comunidades que está participando", error);
+  }
+}
+
 async function joinCommunity(req: Request, res: Response) {
   const { id } = req.headers;
   const { id: communityId } = req.params;
@@ -185,4 +203,5 @@ export {
   joinCommunity,
   leaveCommunity,
   deleteCommunity,
+  getCommunitiesIsParticipanting,
 };
