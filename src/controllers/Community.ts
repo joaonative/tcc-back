@@ -4,10 +4,10 @@ import Community from "../models/Community";
 import User from "../models/User";
 
 async function createCommunity(req: Request, res: Response) {
-  const { name, description, age_range, participantCount, category } = req.body;
+  const { name, description, age_range, participantLimit, category } = req.body;
   const { id } = req.headers;
 
-  if (!name || !description || !age_range || !participantCount || !category) {
+  if (!name || !description || !age_range || !participantLimit || !category) {
     res.status(400).send({ message: "preencha todos os campos" });
     return;
   }
@@ -44,7 +44,7 @@ async function createCommunity(req: Request, res: Response) {
     name,
     description,
     age_range,
-    participantCount,
+    participantLimit,
     category,
     owner: owner.id,
   });
