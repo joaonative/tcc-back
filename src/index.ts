@@ -9,11 +9,7 @@ import communitiesRoutes from "./routes/Community";
 const server = express();
 server.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "http://localhost:4173",
-      "https://iparque.vercel.app",
-    ],
+    origin: ["http://localhost:3000", "https://iparque.vercel.app"],
     credentials: true,
   })
 );
