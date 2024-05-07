@@ -5,11 +5,24 @@ import User from "../models/User";
 
 async function createCommunity(req: Request, res: Response) {
   try {
-    const { name, description, age_range, participantLimit, category } =
-      req.body;
+    const {
+      name,
+      description,
+      age_range,
+      participantLimit,
+      category,
+      imageUrl,
+    } = req.body;
     const { id } = req.headers;
 
-    if (!name || !description || !age_range || !participantLimit || !category) {
+    if (
+      !name ||
+      !description ||
+      !age_range ||
+      !participantLimit ||
+      !category ||
+      !imageUrl
+    ) {
       res.status(400).send({ message: "preencha todos os campos" });
       return;
     }
@@ -49,6 +62,7 @@ async function createCommunity(req: Request, res: Response) {
       name,
       description,
       age_range,
+      imageUrl,
       participantLimit,
       participantCount,
       participants,
