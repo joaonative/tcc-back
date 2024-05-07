@@ -81,7 +81,7 @@ async function createCommunity(req: Request, res: Response) {
 async function deleteCommunity(req: Request, res: Response) {
   try {
     const { id } = req.headers;
-    const { id: communityId } = req.params;
+    const { communityId } = req.params;
 
     if (!id || !communityId) {
       return res
