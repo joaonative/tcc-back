@@ -2,6 +2,7 @@ import express from "express";
 import {
   createCommunity,
   getCommunity,
+  getCommunityById,
   getCommunitiesIsParticipanting,
   joinCommunity,
   leaveCommunity,
@@ -12,6 +13,7 @@ import { validadeToken } from "../middleware/auth";
 const router = express.Router();
 
 router.get("/", validadeToken, getCommunity);
+router.get("/:id", validadeToken, getCommunityById);
 router.get("/participant", validadeToken, getCommunitiesIsParticipanting);
 router.post("/", validadeToken, createCommunity);
 router.put("/join/:communityId", validadeToken, joinCommunity);
