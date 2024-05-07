@@ -163,6 +163,47 @@ async function getCommunitiesIsParticipanting(req: Request, res: Response) {
   }
 }
 
+async function getCommunityById(req: Request, res: Response) {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).send({ message: "faltando parâmetros de id " });
+    }
+
+    if (!mongoose.isValidObjectId(id)) {
+      return res.status(400).send({ message: "formato de id inválido" });
+    }
+
+    const community = await Community.findById(id);
+
+    if (!community) {
+      return res.status(404).send({ message: "comunidade não encontrada" });
+    }
+
+    const participants = [];
+
+    const owner = await User.findById(community.owner);
+
+    if (!owner) {
+      return res.status(404).send({ message: "criador não encontrado" });
+    }
+
+    for (const participant of community.participants) {
+      const user = await User.findById(participant);
+      if (user) {
+        participants.push({
+          id: user.id,
+          name: user.name,
+          imageUrl: user.imageUrl,
+        });
+      }
+    }
+    res.status(200).json({ community, participants, owner: owner.name });
+  } catch (error) {
+    console.log("Erro ao pegar comunidade por id");
+  }
+}
+
 async function joinCommunity(req: Request, res: Response) {
   try {
     const { id } = req.headers;
@@ -249,6 +290,7 @@ async function leaveCommunity(req: Request, res: Response) {
 export {
   createCommunity,
   getCommunity,
+  getCommunityById,
   joinCommunity,
   leaveCommunity,
   deleteCommunity,
