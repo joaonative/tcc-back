@@ -33,6 +33,9 @@ async function createCommunity(req: Request, res: Response) {
     name,
   });
 
+  const participantCount = 1;
+  const participants = [owner.id];
+
   if (duplicatedCommunity) {
     res
       .status(400)
@@ -45,6 +48,8 @@ async function createCommunity(req: Request, res: Response) {
     description,
     age_range,
     participantLimit,
+    participantCount,
+    participants,
     category,
     owner: owner.id,
   });
