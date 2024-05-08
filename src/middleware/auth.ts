@@ -19,9 +19,9 @@ async function validadeToken(req: Request, res: Response, next: NextFunction) {
           .send({ message: "validação falhou, por favor se autentique" });
         return;
       }
-    });
 
-    next();
+      next();
+    });
   } catch (error) {
     throw new Error("Error validating token: " + error.message);
   }
