@@ -125,10 +125,9 @@ async function getCommunity(req: Request, res: Response) {
     const page = +req.query.page || 0;
     const limit = 9;
     if (isNaN(page) || page < 0) {
-      res
+      return res
         .status(400)
         .send({ message: "a paginação tem que ser um valor numérico" });
-      return;
     }
     const skip = page * limit;
     const totalCommunities = await Community.countDocuments();
@@ -139,7 +138,7 @@ async function getCommunity(req: Request, res: Response) {
       return res.status(404).send({ message: "comunidades não encontradas" });
     }
 
-    res.status(200).json({ communities });
+    return res.status(200).json({ communities });
   } catch (error) {
     console.log("Erro ao mostrar comunidades", error);
   }

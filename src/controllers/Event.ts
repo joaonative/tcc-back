@@ -161,10 +161,9 @@ async function getEvents(req: Request, res: Response) {
     const page = +req.query.page || 0;
     const limit = 9;
     if (isNaN(page) || page < 0) {
-      res
+      return res
         .status(400)
         .send({ message: "a paginação tem que ser um valor numérico" });
-      return;
     }
     const skip = page * limit;
     const totalEvents = await Event.countDocuments({ isExpired: false });
@@ -184,7 +183,7 @@ async function getEvents(req: Request, res: Response) {
       }
     });
 
-    res.status(200).json({ events, totalPages });
+    return res.status(200).json({ events, totalPages });
   } catch (error) {
     console.log("Erro ao pegar eventos", error);
   }
