@@ -2,6 +2,7 @@ import { request, Request, Response } from "express";
 import mongoose, { now } from "mongoose";
 import Event from "../models/Event";
 import User from "../models/User";
+import Community from "../models/Community";
 
 async function createEvent(req: Request, res: Response) {
   try {
@@ -320,8 +321,9 @@ async function getEventById(req: Request, res: Response) {
     const participants = [];
 
     const owner = await User.findById(event.owner);
+    const community = await Community.findById(event.owner);
 
-    if (!owner) {
+    if (!owner && !community) {
       return res.status(404).send({ message: "criador não encontrado" });
     }
 
@@ -336,7 +338,11 @@ async function getEventById(req: Request, res: Response) {
       }
     }
 
-    res.status(200).json({ event, participants, owner: owner.name });
+    res.status(200).json({
+      event,
+      participants,
+      owner: community ? `Comunidade ${community.name}` : owner.name,
+    });
   } catch (error) {
     console.log("Erro ao pegar evento por id", error);
   }
