@@ -248,23 +248,6 @@ async function getEventsByOwner(req: Request, res: Response) {
   }
 }
 
-async function getLatestEventByOwner(req: Request, res: Response) {
-  try {
-    const { id } = req.params;
-    if (!id) {
-      return;
-    }
-    const latestEvent = await Event.findOne({
-      owner: id,
-      isExpired: false,
-    }).sort({ created_at: -1 });
-
-    res.status(200).json({ latestEvent });
-  } catch (error) {
-    console.log("Erro ao pegar evento por dono", error);
-  }
-}
-
 async function getEvents(req: Request, res: Response) {
   try {
     const page = +req.query.page || 0;
@@ -466,6 +449,5 @@ export {
   leaveEvent,
   deleteEvent,
   getEventsByOwner,
-  getLatestEventByOwner,
   getEventsIsParticipanting,
 };
