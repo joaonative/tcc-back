@@ -90,6 +90,97 @@ async function createEvent(req: Request, res: Response) {
   }
 }
 
+async function createEventByCommunity(req: Request, res: Response) {
+  try {
+    const {
+      name,
+      description,
+      location,
+      date,
+      age_range,
+      imageUrl,
+      mapUrl,
+      participantLimit,
+      category,
+      communityId,
+    } = req.body;
+    const { id } = req.headers;
+
+    if (
+      !name ||
+      !description ||
+      !location ||
+      !date ||
+      !age_range ||
+      !imageUrl ||
+      !mapUrl ||
+      !participantLimit ||
+      !category ||
+      !communityId
+    ) {
+      res.status(400).send({ message: "preencha todos os campos" });
+      return;
+    }
+    if (!id) {
+      res.status(400).send({ message: "cabeçalho de id de usuário faltando" });
+      return;
+    }
+
+    if (
+      !mongoose.isValidObjectId(id) ||
+      !mongoose.isValidObjectId(communityId)
+    ) {
+      return res.status(400).send({
+        message: "formato de id de usuário ou id de comunidade inválido",
+      });
+    }
+
+    const user = await User.findById(id);
+
+    if (!user) {
+      res.status(404).send({ message: "dono não existe" });
+      return;
+    }
+
+    const duplicatedEvent = await Event.findOne({ owner: communityId, name });
+
+    if (duplicatedEvent) {
+      res
+        .status(400)
+        .send({ message: "evento da mesma comunidade com nome duplicado" });
+      return;
+    }
+
+    const participantCount = 1;
+    const participants = [user.id];
+
+    const event = new Event({
+      name,
+      description,
+      location,
+      date,
+      age_range,
+      imageUrl,
+      mapUrl,
+      participantLimit,
+      participantCount,
+      participants,
+      category,
+      owner: communityId,
+    });
+
+    if (event.date < date) {
+      return res
+        .status(400)
+        .send({ message: "a data do evento precisa ser válida" });
+    }
+
+    await event.save();
+
+    res.status(201).json({ event });
+  } catch (error) {}
+}
+
 async function deleteEvent(req: Request, res: Response) {
   try {
     const { id } = req.headers;
@@ -151,6 +242,23 @@ async function getEventsByOwner(req: Request, res: Response) {
 
       res.status(200).json({ events });
     });
+  } catch (error) {
+    console.log("Erro ao pegar evento por dono", error);
+  }
+}
+
+async function getLatestEventByOwner(req: Request, res: Response) {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return;
+    }
+    const latestEvent = await Event.findOne({
+      owner: id,
+      isExpired: false,
+    }).sort({ created_at: -1 });
+
+    res.status(200).json({ latestEvent });
   } catch (error) {
     console.log("Erro ao pegar evento por dono", error);
   }
@@ -345,11 +453,13 @@ async function leaveEvent(req: Request, res: Response) {
 
 export {
   createEvent,
+  createEventByCommunity,
   getEvents,
   getEventById,
   joinEvent,
   leaveEvent,
   deleteEvent,
   getEventsByOwner,
+  getLatestEventByOwner,
   getEventsIsParticipanting,
 };
