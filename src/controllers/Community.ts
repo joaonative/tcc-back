@@ -114,7 +114,7 @@ async function deleteCommunity(req: Request, res: Response) {
         .send({ message: "você não está autorizado a deletar" });
     }
     await trashCommunity.deleteOne();
-    res.status(204).end();
+    return res.status(204).end();
   } catch (error) {
     console.log("Erro ao deletar a comunidade", error);
   }
@@ -206,9 +206,10 @@ async function getCommunityById(req: Request, res: Response) {
 async function joinCommunity(req: Request, res: Response) {
   try {
     const { id } = req.headers;
-    const { id: communityId } = req.params;
+    const { communityId } = req.params;
 
     if (!id || !communityId) {
+      console.log(id, communityId);
       return res
         .status(400)
         .send({ message: "faltando parâmetros ou cabeçalho" });
