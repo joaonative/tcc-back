@@ -1,9 +1,10 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-
+import nodemailer from "nodemailer";
 import User from "../models/User";
 import mongoose from "mongoose";
+import Verification from "../models/Verification";
 
 const maxAge = 7 * 24 * 60 * 60;
 
@@ -113,6 +114,77 @@ async function login(req: Request, res: Response) {
   } catch (error) {
     throw new Error("Error logging user: " + error.message);
   }
+}
+
+async function generateCode(req: Request, res: Response) {
+  const { email } = req.body;
+
+  if (!email) {
+    res.status(400).send({ message: "email não enviado" });
+    return;
+  }
+  const user = await User.find({ email });
+  if (!user) {
+    res.status(404).send({ message: "usuário não encontrado" });
+    return;
+  }
+
+  await sendVerificationCode(email);
+  return res.status(200).end();
+}
+
+async function validateCode(req: Request, res: Response, next: NextFunction) {
+  const { code, email } = req.body;
+  const hashedCode = await bcrypt.hash(code, 5);
+
+  const validCode = await Verification.find({
+    email,
+    verificationCode: hashedCode,
+  });
+
+  if (!validCode) {
+    res.status(401).send({ message: "código inválido" });
+    return;
+  }
+  next();
+}
+
+async function changePassword(req: Request, res: Response) {
+  const { email, newPassword } = req.body;
+
+  const hashPassword = await bcrypt.hash(newPassword, 10);
+
+  try {
+    await User.findOneAndUpdate(email, { password: hashPassword });
+  } catch (error) {
+    res
+      .status(500)
+      .send({ message: "erro ao encontrar usuário e atualiza-lo", error });
+  }
+  res.status(200).end();
+}
+
+async function sendVerificationCode(email: string) {
+  const verificationCode = Math.random()
+    .toString(36)
+    .substring(2, 8)
+    .toUpperCase();
+
+  const hashedCode = await bcrypt.hash(verificationCode, 5);
+  await Verification.create({ email, hashedCode });
+
+  const transporter = nodemailer.createTransport({
+    // Configure seu serviço de e-mail aqui (por exemplo, SMTP)
+  });
+
+  const mailOptions = {
+    from: "seuemail@gmail.com",
+    to: email,
+    subject: "Código de Verificação",
+    text: `Seu código de verificação é: ${verificationCode}`,
+  };
+
+  await transporter.sendMail(mailOptions);
 }
 
 async function logout(req: Request, res: Response) {
