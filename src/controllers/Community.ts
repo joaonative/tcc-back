@@ -114,8 +114,7 @@ async function deleteCommunity(req: Request, res: Response) {
         .status(401)
         .send({ message: "você não está autorizado a deletar" });
     }
-    const eventsCommunity = await Event.findById(communityId);
-    await Event.deleteMany(eventsCommunity);
+    await Event.deleteMany({ owner: communityId });
 
     await trashCommunity.deleteOne();
     return res.status(204).end();
