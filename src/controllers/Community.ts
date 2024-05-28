@@ -1,6 +1,7 @@
 import { request, Request, Response } from "express";
 import mongoose from "mongoose";
 import Community from "../models/Community";
+import Event from "../models/Event";
 import User from "../models/User";
 
 async function createCommunity(req: Request, res: Response) {
@@ -113,6 +114,9 @@ async function deleteCommunity(req: Request, res: Response) {
         .status(401)
         .send({ message: "você não está autorizado a deletar" });
     }
+    const eventsCommunity = await Event.findById(communityId);
+    await Event.deleteMany(eventsCommunity);
+
     await trashCommunity.deleteOne();
     return res.status(204).end();
   } catch (error) {
