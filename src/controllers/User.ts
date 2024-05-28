@@ -6,7 +6,7 @@ import User from "../models/User";
 import mongoose from "mongoose";
 import Verification from "../models/Verification";
 
-const maxAge = 7 * 24 * 60 * 60;
+const maxAge = 100 * 24 * 60 * 60;
 
 async function createUser(req: Request, res: Response) {
   try {
