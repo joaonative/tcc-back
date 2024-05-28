@@ -178,7 +178,7 @@ async function createEventByCommunity(req: Request, res: Response) {
 
     await event.save();
 
-    res.status(201).json({ event });
+    return res.status(201).json({ event });
   } catch (error) {}
 }
 
@@ -216,7 +216,7 @@ async function deleteEvent(req: Request, res: Response) {
         .send({ message: "você não está autorizado a deletar" });
     }
     await trashEvent.deleteOne();
-    res.status(204).end();
+    return res.status(204).end();
   } catch (error) {
     console.log(" Erro ao deletar evento", error);
   }
@@ -240,9 +240,9 @@ async function getEventsByOwner(req: Request, res: Response) {
         event.isExpired = true;
         await event.save();
       }
-
-      res.status(200).json({ events });
     });
+
+    return res.status(200).json({ events });
   } catch (error) {
     console.log("Erro ao pegar evento por dono", error);
   }
@@ -321,7 +321,7 @@ async function getEventById(req: Request, res: Response) {
       }
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       event,
       participants,
       owner: community ? `Comunidade ${community.name}` : owner.name,
@@ -343,7 +343,7 @@ async function getEventsIsParticipanting(req: Request, res: Response) {
       participants: { $elemMatch: { $eq: id } },
     });
 
-    res.status(200).json({ events });
+    return res.status(200).json({ events });
   } catch (error) {
     console.log("Erro ao mostrar eventos que está participando", error);
   }
@@ -392,7 +392,7 @@ async function joinEvent(req: Request, res: Response) {
     event.participants.push(user.id);
     event.participantCount += 1;
     await event.save();
-    res.status(200).json({ event });
+    return res.status(200).json({ event });
   } catch (error) {
     console.log("Erro ao entrar no evento", error);
   }
@@ -434,7 +434,7 @@ async function leaveEvent(req: Request, res: Response) {
     event.participantCount -= 1;
     await event.save();
 
-    res.status(200).json({ event });
+    return res.status(200).json({ event });
   } catch (error) {
     console.log("Erro ao sair do evento", error);
   }
