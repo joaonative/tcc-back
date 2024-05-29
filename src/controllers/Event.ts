@@ -477,6 +477,31 @@ async function leaveEvent(req: Request, res: Response) {
   }
 }
 
+async function searchEventsByName(req: Request, res: Response) {
+  try {
+    const { searchTerm } = req.query;
+
+    if (!searchTerm) {
+      return res
+        .status(400)
+        .send({ message: "Por favor, forneça um termo de pesquisa" });
+    }
+
+    const events = await Event.find({
+      name: { $regex: new RegExp(searchTerm.toString(), "i") },
+    });
+
+    if (!events || events.length === 0) {
+      return res.status(404).send({ message: "Nenhum evento encontrado" });
+    }
+
+    return res.status(200).json({ events });
+  } catch (error) {
+    console.log("Erro ao buscar eventos por nome", error);
+    return res.status(500).send({ message: "Erro interno do servidor" });
+  }
+}
+
 export {
   createEvent,
   createEventByCommunity,
@@ -488,4 +513,5 @@ export {
   deleteEvent,
   getEventsByOwner,
   getEventsIsParticipanting,
+  searchEventsByName,
 };

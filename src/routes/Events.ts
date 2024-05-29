@@ -10,6 +10,7 @@ import {
   getEventsIsParticipanting,
   createEventByCommunity,
   getEventByCommunity,
+  searchEventsByName,
 } from "../controllers/Event";
 import { validadeToken } from "../middleware/auth";
 
@@ -25,5 +26,6 @@ router.get("/community/:communityId", validadeToken, getEventByCommunity);
 router.put("/join/:eventId", validadeToken, joinEvent);
 router.get("/leave/:eventId", validadeToken, leaveEvent);
 router.delete("/:eventId", validadeToken, deleteEvent);
+router.get("/search", validadeToken, searchEventsByName);
 
 export default router;

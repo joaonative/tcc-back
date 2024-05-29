@@ -21,5 +21,7 @@ const eventSchema = new Schema(
   { timestamps: true }
 );
 
+eventSchema.index({ name: "text", description: "text" });
+
 const Event = model("Event", eventSchema);
 export default Event;
