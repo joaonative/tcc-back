@@ -143,6 +143,13 @@ async function createEventByCommunity(req: Request, res: Response) {
       return;
     }
 
+    const community = await Community.findById(communityId);
+
+    if (!community) {
+      res.status(404).send({ message: "comunidade não existe" });
+      return;
+    }
+
     const duplicatedEvent = await Event.findOne({ owner: communityId, name });
 
     if (duplicatedEvent) {
@@ -167,7 +174,8 @@ async function createEventByCommunity(req: Request, res: Response) {
       participantCount,
       participants,
       category,
-      owner: communityId,
+      owner: user.id,
+      community: community._id,
     });
 
     if (event.date < date) {
@@ -180,6 +188,35 @@ async function createEventByCommunity(req: Request, res: Response) {
 
     return res.status(201).json({ event });
   } catch (error) {}
+}
+
+async function getEventByCommunity(req: Request, res: Response) {
+  try {
+    const { communityId } = req.params;
+    if (!communityId) {
+      return;
+    }
+    const events = await Event.find({
+      community: communityId,
+      isExpired: false,
+    });
+    if (!events) {
+      return res
+        .status(404)
+        .send({ message: "eventos deste criador não encontrados" });
+    }
+
+    events.map(async (event) => {
+      if (event.date < now()) {
+        event.isExpired = true;
+        await event.save();
+      }
+    });
+
+    return res.status(200).json({ events });
+  } catch (error) {
+    console.log("Erro ao pegar evento por dono", error);
+  }
 }
 
 async function deleteEvent(req: Request, res: Response) {
@@ -443,6 +480,7 @@ async function leaveEvent(req: Request, res: Response) {
 export {
   createEvent,
   createEventByCommunity,
+  getEventByCommunity,
   getEvents,
   getEventById,
   joinEvent,

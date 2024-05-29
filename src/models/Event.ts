@@ -1,4 +1,5 @@
 import { Schema, model } from "mongoose";
+import { ObjectId } from "mongodb";
 
 const eventSchema = new Schema(
   {
@@ -15,6 +16,7 @@ const eventSchema = new Schema(
     participants: [{ type: String }],
     owner: { type: String, required: true },
     isExpired: { type: Boolean, required: true, default: false },
+    community: { type: ObjectId, required: false },
   },
   { timestamps: true }
 );
