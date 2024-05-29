@@ -9,6 +9,7 @@ import {
   getEventsByOwner,
   getEventsIsParticipanting,
   createEventByCommunity,
+  getEventByCommunity,
 } from "../controllers/Event";
 import { validadeToken } from "../middleware/auth";
 
@@ -20,6 +21,7 @@ router.get("/owner/:id", validadeToken, getEventsByOwner);
 router.get("/:eventId", validadeToken, getEventById);
 router.post("/", validadeToken, createEvent);
 router.post("/community", validadeToken, createEventByCommunity);
+router.get("/community/:communityId", validadeToken, getEventByCommunity);
 router.put("/join/:eventId", validadeToken, joinEvent);
 router.get("/leave/:eventId", validadeToken, leaveEvent);
 router.delete("/:eventId", validadeToken, deleteEvent);
