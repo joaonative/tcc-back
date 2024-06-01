@@ -488,12 +488,8 @@ async function searchEventsByName(req: Request, res: Response) {
     }
 
     const events = await Event.find({
-      name: { $regex: new RegExp(searchTerm.toString(), "i") },
+      name: { $regex: new RegExp(`.*${searchTerm}.*`, "i") },
     });
-
-    if (!events || events.length === 0) {
-      return res.status(404).send({ message: "Nenhum evento encontrado" });
-    }
 
     return res.status(200).json({ events });
   } catch (error) {
