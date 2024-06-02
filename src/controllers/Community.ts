@@ -290,6 +290,27 @@ async function leaveCommunity(req: Request, res: Response) {
   }
 }
 
+async function searchCommunitiesByName(req: Request, res: Response) {
+  try {
+    const { searchTerm } = req.query;
+
+    if (!searchTerm) {
+      return res
+        .status(400)
+        .send({ message: "Por favor, forneça um termo de pesquisa" });
+    }
+
+    const communities = await Community.find({
+      name: { $regex: new RegExp(`.*${searchTerm}.*`, "i") },
+    });
+
+    return res.status(200).json({ communities });
+  } catch (error) {
+    console.log("Erro ao buscar eventos por nome", error);
+    return res.status(500).send({ message: "Erro interno do servidor" });
+  }
+}
+
 export {
   createCommunity,
   getCommunity,
@@ -298,4 +319,5 @@ export {
   leaveCommunity,
   deleteCommunity,
   getCommunitiesIsParticipanting,
+  searchCommunitiesByName,
 };

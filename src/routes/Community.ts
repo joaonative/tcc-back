@@ -7,12 +7,14 @@ import {
   joinCommunity,
   leaveCommunity,
   deleteCommunity,
+  searchCommunitiesByName,
 } from "../controllers/Community";
 import { validadeToken } from "../middleware/auth";
 
 const router = express.Router();
 
 router.get("/", validadeToken, getCommunity);
+router.get("/search", validadeToken, searchCommunitiesByName);
 router.get("/:id", validadeToken, getCommunityById);
 router.get("/participant", validadeToken, getCommunitiesIsParticipanting);
 router.post("/", validadeToken, createCommunity);
