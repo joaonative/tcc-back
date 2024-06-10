@@ -199,7 +199,7 @@ async function getEventByCommunity(req: Request, res: Response) {
     const events = await Event.find({
       community: communityId,
       isExpired: false,
-    });
+    }).sort({ createdAt: -1 });
     if (!events) {
       return res
         .status(404)
@@ -298,6 +298,7 @@ async function getEvents(req: Request, res: Response) {
     const totalEvents = await Event.countDocuments({ isExpired: false });
     const totalPages = Math.ceil(totalEvents / limit);
     const events = await Event.find({ isExpired: false })
+      .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
 
@@ -489,7 +490,7 @@ async function searchEventsByName(req: Request, res: Response) {
 
     const events = await Event.find({
       name: { $regex: new RegExp(`.*${searchTerm}.*`, "i") },
-    });
+    }).sort({ createdAt: -1 });
 
     return res.status(200).json({ events });
   } catch (error) {

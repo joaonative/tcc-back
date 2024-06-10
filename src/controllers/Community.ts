@@ -135,7 +135,10 @@ async function getCommunity(req: Request, res: Response) {
     const skip = page * limit;
     const totalCommunities = await Community.countDocuments();
     const totalPages = Math.ceil(totalCommunities / limit);
-    const communities = await Community.find().skip(skip).limit(limit);
+    const communities = await Community.find()
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
 
     if (!communities) {
       return res.status(404).send({ message: "comunidades não encontradas" });
